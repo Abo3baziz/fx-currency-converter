@@ -1,4 +1,5 @@
 import { Providers } from "./Providers";
+import LiveMarkets from "@/components/LiveMarkets";
 import Header from "@/components/Header";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <>
       <Providers>
         <Header />
+        <LiveMarkets />
       </Providers>
     </>
   );
