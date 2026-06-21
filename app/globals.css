@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --neutral-50: #ffffff;
+  --neutral-100: #c6c6c6;
+  --neutral-200: #9d9d9d;
+  --neutral-300: #444446;
+  --neutral-400: #3d3d3d;
+  --neutral-500: #2e2e2e;
+  --neutral-600: #202022;
+  --neutral-700: #171719;
+  --neutral-900: #0a0a0a;
+  --red-500: #ff4141;
+  --green-500: #42eb05;
+  --lime-500: #cef739;
+  --lime-800: #283300;
+
+  /* Spacing */
+
+  /* Border Radius */
+  --radius-0: 0px;
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-10: 10px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-24: 24px;
+  --radius-full: 999px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-jetbrains-mono: var(--font-jetbrains-mono);
+  --spacing-025: 2px;
+  --spacing-050: 4px;
+  --spacing-075: 6px;
+  --spacing-100: 8px;
+  --spacing-125: 10px;
+  --spacing-150: 12px;
+  --spacing-200: 16px;
+  --spacing-250: 20px;
+  --spacing-300: 24px;
+  --spacing-400: 32px;
+  --spacing-500: 40px;
+  --spacing-600: 48px;
+  --spacing-800: 64px;
+  --spacing-1000: 80px;
+  --spacing-1200: 96px;
+  --spacing-1400: 112px;
+  --spacing-1600: 128px;
+  --spacing-1800: 140px;
+
+  --color-header-text-color: var(--neutral-200);
+  --color-liveMarket-yellow-bg: var(--lime-500);
+  --color-liveMarket-rates-bg: var(--neutral-700);
+
+  --breakpoint-mobile: 22.5rem;
+  --breakpoint-tablet: 48rem;
+  --breakpoint-desktop: 90rem;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jetbrains-mono);
 }
