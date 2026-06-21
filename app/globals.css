@@ -59,6 +59,16 @@
   --breakpoint-mobile: 31.5rem;
   --breakpoint-tablet: 48rem;
   --breakpoint-desktop: 90rem;
+
+  --animate-loader: loader 1s linear infinite;
+
+  @keyframes loader {
+    to {
+      background-position:
+        -20px 0,
+        20px 0;
+    }
+  }
 }
 
 /* @media (prefers-color-scheme: dark) {
