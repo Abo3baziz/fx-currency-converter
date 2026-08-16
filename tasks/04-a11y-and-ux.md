@@ -1,6 +1,6 @@
 # 04 - Accessibility & UX
 
-Status: pending
+Status: done
 Priority: medium
 
 ## Goal

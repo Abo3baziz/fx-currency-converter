@@ -1,6 +1,6 @@
 # 05 - SEO & Deployment
 
-Status: pending
+Status: done
 Priority: medium
 
 ## Goal
@@ -21,6 +21,9 @@ and rewrite the README so the Frontend Mentor submission counts as valid.
    submission.
 4. Remove any remaining placeholder content ("55 CURRENCIES" header copy should
    already be updated in task 00; verify it reads 60).
+   Note: the header renders the real `flags.length` (57) — 3 flag images
+   (cy/hm/hr) have no Frankfurter-backed currency, so the truthful count stays
+   57. Metadata/README copy reflects 57.
 
 ## Verify
 
