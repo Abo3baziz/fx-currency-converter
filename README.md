@@ -63,6 +63,8 @@ npm run start
 
 ## Credits
 
+- **Case study**: see [docs/case-study.md](docs/case-study.md) for a full
+  engineering write-up (architecture, ADRs, data flow).
 - **Data**: ECB daily reference rates via the [Frankfurter API](https://www.frankfurter.dev).
 - **Icons**: Next.js starter icons, plus custom-built SVG assets in
   `public/images/`.
