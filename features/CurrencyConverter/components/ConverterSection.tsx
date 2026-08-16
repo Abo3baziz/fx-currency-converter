@@ -61,7 +61,11 @@ export default function ConverterSection() {
         <CurrencyField title="receive" rate={rate} />
       </div>
 
-      <RateLine rate={rate} />
+      <RateLine
+        rate={rate}
+        isError={pairRate.isError}
+        onRetry={() => pairRate.refetch()}
+      />
     </section>
   );
 }

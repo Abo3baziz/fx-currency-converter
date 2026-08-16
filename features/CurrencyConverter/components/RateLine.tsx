@@ -8,8 +8,12 @@ import formatRate from "@/utils/formatRate";
 
 export default function RateLine({
   rate,
+  isError,
+  onRetry,
 }: {
   rate: number | undefined;
+  isError: boolean;
+  onRetry: () => void;
 }) {
   const base = useCurrencyStore((s) => s.base);
   const quote = useCurrencyStore((s) => s.quote);
@@ -20,15 +24,30 @@ export default function RateLine({
 
   return (
     <div className="flex items-center justify-between gap-100">
-      <p className="text-[14px] text-white">
-        {rate !== undefined ? (
+      <div className="flex items-center gap-150">
+        {isError ? (
           <>
-            1 {base} = {formatRate(rate)} {quote}
+            <p className="text-[14px] text-[var(--red-500)]">
+              Couldn&apos;t load the rate.
+            </p>
+            <button
+              onClick={onRetry}
+              className="rounded-[8px] border border-currency-change-stroke bg-currency-change-bg px-150 py-050 text-[12px] text-white cursor-pointer hover:bg-neutral-600">
+              Retry
+            </button>
           </>
         ) : (
-          "Loading rate..."
+          <p className="text-[14px] text-white">
+            {rate !== undefined ? (
+              <>
+                1 {base} = {formatRate(rate)} {quote}
+              </>
+            ) : (
+              "Loading rate..."
+            )}
+          </p>
         )}
-      </p>
+      </div>
 
       <button
         onClick={() => toggleFavorite(base, quote)}

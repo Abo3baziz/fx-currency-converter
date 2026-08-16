@@ -1,6 +1,6 @@
 # 02 - Ticker & Rate History
 
-Status: pending
+Status: done
 Priority: high
 
 ## Goal

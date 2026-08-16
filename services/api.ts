@@ -15,7 +15,6 @@ async function request<T>(path: string): Promise<T> {
 
     return (await res.json()) as T;
   } catch (error) {
-    // TODO handle errors in error state
     console.log(error);
     throw error;
   }

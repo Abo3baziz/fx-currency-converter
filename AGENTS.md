@@ -130,14 +130,14 @@ import CurrencyOption from "./CurrencyOption";
 
 ### Error Handling
 
-- `services/api.ts` uses `try/catch` with a `console.log(error)` and a
-  `// TODO handle errors in error state` comment — error surfacing to the UI is
-  **not yet implemented**. Follow this TODO pattern: leave a `// TODO` note
-  rather than silently swallowing, and surface errors via the UI when
-  implementing.
-- `LiveRate.tsx` handles only the pending state (`isPending`) and has a
-  `// TODO handle failed fetch process` comment for the error state. Keep this
-  pattern when extending.
+- `services/api.ts` uses `try/catch` with a `console.log(error)` and rethrows so
+  callers (React Query hooks) receive the failure. Keep the rethrow so errors
+  reach the UI.
+- Error surfacing is done per-query in the UI: each data component handles
+  `isError` with a short message and a "Retry" button that calls `refetch()`
+  (see `LiveRate.tsx`, `RateLine.tsx`, `RateHistoryChart.tsx`,
+  `CompareList.tsx`, `FavoritesList.tsx`). Follow this pattern when adding new
+  queries.
 
 ### Styling (Tailwind CSS v4)
 

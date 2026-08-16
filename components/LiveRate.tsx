@@ -12,14 +12,23 @@ export default function LiveRate() {
     queryKey: ["rates", "ticker"],
   });
 
-  // TODO handle failed fetch process
-
   if (tickerRates.isPending) {
     return <Loader />;
   }
 
   if (tickerRates.isError || !tickerRates.data) {
-    return null;
+    return (
+      <div className="flex items-center gap-150 px-200">
+        <p className="text-[12px] text-[var(--neutral-200)]">
+          Couldn&apos;t load live rates.
+        </p>
+        <button
+          onClick={() => tickerRates.refetch()}
+          className="rounded-[8px] border border-currency-change-stroke bg-currency-change-bg px-150 py-050 text-[12px] text-white cursor-pointer hover:bg-neutral-600">
+          Retry
+        </button>
+      </div>
+    );
   }
 
   return (

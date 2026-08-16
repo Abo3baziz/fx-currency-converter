@@ -87,7 +87,20 @@ export default function FavoritesList() {
         </p>
       )}
 
-      {favorites.length > 0 && rows.length > 0 && (
+      {favorites.length > 0 && changeQuery.isError && (
+        <div className="flex flex-col items-start gap-100">
+          <p className="text-[14px] text-[var(--red-500)]">
+            Couldn&apos;t load favorites.
+          </p>
+          <button
+            onClick={() => changeQuery.refetch()}
+            className="rounded-[8px] border border-currency-change-stroke bg-currency-change-bg px-150 py-050 text-[12px] text-white cursor-pointer hover:bg-neutral-600">
+            Retry
+          </button>
+        </div>
+      )}
+
+      {favorites.length > 0 && !changeQuery.isError && rows.length > 0 && (
         <ul className="flex flex-col">
           {rows.map((favorite) => (
             <li
