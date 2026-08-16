@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Logo from "@/public/images/logo.svg";
+import { flags } from "@/assets/data/flags";
 
 export default function Header() {
   return (
@@ -11,7 +12,7 @@ export default function Header() {
         loading="eager"></Image>
 
       <p className="text-header-text-color max-mobile:text-[10px]">
-        55 CURRENCIES · EOD · ECB DATA
+        {flags.length} CURRENCIES · EOD · ECB DATA
       </p>
     </header>
   );

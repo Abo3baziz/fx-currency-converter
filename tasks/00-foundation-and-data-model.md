@@ -1,6 +1,6 @@
 # 00 - Foundation & Data Model
 
-Status: pending
+Status: done
 Priority: high
 
 ## Goal

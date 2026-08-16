@@ -15,7 +15,6 @@ export default function CurrencyOption({
     <button
       onClick={() => {
         onSelect(currency);
-        console.log(`Currency selected: ${currency}`);
       }}
       className="flex items-center gap-2 px-3 py-2 w-full hover:bg-neutral-600 text-white text-[14px] cursor-pointer">
       <Image
