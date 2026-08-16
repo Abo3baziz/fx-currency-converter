@@ -1,6 +1,6 @@
 # 03 - Compare, Favorites & Log
 
-Status: pending
+Status: completed
 Priority: high
 
 ## Goal
