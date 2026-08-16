@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import starFilled from "@/public/images/icon-star-filled.svg";
 import star from "@/public/images/icon-star.svg";
 import { useCurrencyStore } from "../store/useCurrencyStore";
@@ -22,6 +23,13 @@ export default function RateLine({
 
   const isFavorite = favorites.some((f) => f.base === base && f.quote === quote);
 
+  const [userToggled, setUserToggled] = useState(false);
+
+  const handleToggleFavorite = () => {
+    setUserToggled(true);
+    toggleFavorite(base, quote);
+  };
+
   return (
     <div className="flex items-center justify-between gap-100">
       <div className="flex items-center gap-150">
@@ -37,7 +45,7 @@ export default function RateLine({
             </button>
           </>
         ) : (
-          <p className="text-[14px] text-white">
+          <p aria-live="polite" className="text-[14px] text-white">
             {rate !== undefined ? (
               <>
                 1 {base} = {formatRate(rate)} {quote}
@@ -50,7 +58,7 @@ export default function RateLine({
       </div>
 
       <button
-        onClick={() => toggleFavorite(base, quote)}
+        onClick={handleToggleFavorite}
         aria-pressed={isFavorite}
         aria-label={
           isFavorite ? "Remove from favorites" : "Add to favorites"
@@ -63,6 +71,13 @@ export default function RateLine({
           height={18}
         />
       </button>
+
+      <span className="sr-only" role="status">
+        {userToggled &&
+          `${isFavorite ? "Added" : "Removed"} ${base}/${quote} ${
+            isFavorite ? "to" : "from"
+          } favorites`}
+      </span>
     </div>
   );
 }

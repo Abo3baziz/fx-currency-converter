@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import downArrow from "@/public/images/icon-chevron-down.svg";
 import searchIcon from "@/public/images/icon-search.svg";
 import { flags } from "@/assets/data/flags";
@@ -15,6 +15,9 @@ export default function ChangeCurrencyButton({
   fieldType: "base" | "quote";
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const listboxRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState("");
   const currentCurrency = useCurrencyStore((s) =>
     fieldType === "base" ? s.base : s.quote,
@@ -32,6 +35,49 @@ export default function ChangeCurrencyButton({
       closeDropdown();
     }
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  const handleListboxKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const options = Array.from(
+      listboxRef.current?.querySelectorAll<HTMLButtonElement>(
+        '[role="option"]',
+      ) ?? [],
+    );
+
+    if (options.length === 0) {
+      return;
+    }
+
+    const currentIndex = options.indexOf(
+      document.activeElement as HTMLButtonElement,
+    );
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      const nextIndex = (currentIndex + 1) % options.length;
+      options[nextIndex].focus();
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      const nextIndex =
+        currentIndex <= 0 ? options.length - 1 : currentIndex - 1;
+      options[nextIndex].focus();
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      options[0].focus();
+    } else if (event.key === "End") {
+      event.preventDefault();
+      options[options.length - 1].focus();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      closeDropdown();
+      buttonRef.current?.focus();
+    }
+  };
 
   const currentFlag =
     flags.find((f) => f.currency === currentCurrency)?.flag ?? "eu.webp";
@@ -71,10 +117,12 @@ export default function ChangeCurrencyButton({
       className="relative">
       <button
         type="button"
+        ref={buttonRef}
         role="combobox"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={`currency-listbox-${fieldType}`}
+        aria-label={`Change ${fieldType} currency`}
         onClick={() => (isOpen ? closeDropdown() : openDropdown(fieldType))}
         className="flex items-center rounded-[8px] p-2.5 border border-currency-change-stroke bg-currency-change-bg gap-2 text-[14px] hover:cursor-pointer">
         <Image
@@ -95,8 +143,10 @@ export default function ChangeCurrencyButton({
       {isOpen && (
         <div
           id={`currency-listbox-${fieldType}`}
+          ref={listboxRef}
           role="listbox"
           aria-label={`Select ${fieldType} currency`}
+          onKeyDown={handleListboxKeyDown}
           className="absolute top-full mt-1 right-0 bg-currency-change-bg border border-currency-change-stroke rounded-[8px] overflow-auto max-h-[300px] z-10 w-[280px] max-w-[calc(100vw-2rem)] shadow-lg">
           <div className="sticky top-0 flex items-center gap-2 p-2.5 border-b border-currency-change-stroke bg-currency-change-bg">
             <Image
@@ -106,12 +156,13 @@ export default function ChangeCurrencyButton({
               height={15}
             />
             <input
+              ref={searchInputRef}
               type="text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search currency"
               aria-label="Search currencies"
-              className="w-full bg-transparent text-[14px] text-white placeholder:text-[var(--neutral-200)] outline-none"
+              className="w-full bg-transparent text-[14px] text-white placeholder:text-[var(--neutral-200)]"
             />
           </div>
 

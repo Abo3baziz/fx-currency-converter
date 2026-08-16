@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import deleteFilledIcon from "@/public/images/icon-delete-filled.svg";
 import deleteIcon from "@/public/images/icon-delete.svg";
 import formatAmount from "@/utils/formatAmount";
@@ -17,6 +18,8 @@ export default function ConversionLog() {
   const removeLogEntry = useCurrencyStore((s) => s.removeLogEntry);
   const clearLog = useCurrencyStore((s) => s.clearLog);
 
+  const [announcement, setAnnouncement] = useState("");
+
   const sendNumber = Number(sendAmount);
   const receiveNumber = Number(receiveAmount);
   const hasConversion =
@@ -31,16 +34,24 @@ export default function ConversionLog() {
       return;
     }
 
-    const timestamp = Date.now();
-    logConversion({
+    const entry = {
       id: crypto.randomUUID(),
       base,
       quote,
       sendAmount: sendNumber,
       receiveAmount: receiveNumber,
-      timestamp,
-      relativeTime: getRelativeTime(timestamp),
-    });
+      timestamp: Date.now(),
+      relativeTime: getRelativeTime(Date.now()),
+    };
+    logConversion(entry);
+    setAnnouncement(
+      `Logged ${formatAmount(entry.sendAmount)} ${entry.base} equals ${formatAmount(entry.receiveAmount)} ${entry.quote}`,
+    );
+  };
+
+  const handleClearLog = () => {
+    clearLog();
+    setAnnouncement("Conversion log cleared");
   };
 
   return (
@@ -60,7 +71,7 @@ export default function ConversionLog() {
           {conversionLog.length > 0 && (
             <button
               type="button"
-              onClick={clearLog}
+              onClick={handleClearLog}
               className="flex items-center gap-100 text-[12px] text-[var(--neutral-200)] hover:text-white cursor-pointer">
               <Image src={deleteFilledIcon} alt="" width={14} height={14} />
               Clear all
@@ -75,32 +86,38 @@ export default function ConversionLog() {
           converter above.
         </p>
       ) : (
-        <ul className="flex flex-col">
-          {conversionLog.map((entry) => (
-            <li
-              key={entry.id}
-              className="flex items-center justify-between gap-200 py-100 border-b border-currency-field-stroke last:border-b-0">
-              <div className="min-w-0">
-                <p className="text-white text-[14px]">
-                  {formatAmount(entry.sendAmount)} {entry.base}
-                  <span className="text-[var(--neutral-200)]"> → </span>
-                  {formatAmount(entry.receiveAmount)} {entry.quote}
-                </p>
-                <p className="text-[12px] text-[var(--neutral-200)]">
-                  {getRelativeTime(entry.timestamp)}
-                </p>
-              </div>
+        <>
+          <ul className="flex flex-col">
+            {conversionLog.map((entry) => (
+              <li
+                key={entry.id}
+                className="flex items-center justify-between gap-200 py-100 border-b border-currency-field-stroke last:border-b-0">
+                <div className="min-w-0">
+                  <p className="text-white text-[14px]">
+                    {formatAmount(entry.sendAmount)} {entry.base}
+                    <span className="text-[var(--neutral-200)]"> → </span>
+                    {formatAmount(entry.receiveAmount)} {entry.quote}
+                  </p>
+                  <p className="text-[12px] text-[var(--neutral-200)]">
+                    {getRelativeTime(entry.timestamp)}
+                  </p>
+                </div>
 
-              <button
-                type="button"
-                onClick={() => removeLogEntry(entry.id)}
-                aria-label="Delete conversion entry"
-                className="cursor-pointer">
-                <Image src={deleteIcon} alt="" width={16} height={16} />
-              </button>
-            </li>
-          ))}
-        </ul>
+                <button
+                  type="button"
+                  onClick={() => removeLogEntry(entry.id)}
+                  aria-label={`Delete ${formatAmount(entry.sendAmount)} ${entry.base} to ${formatAmount(entry.receiveAmount)} ${entry.quote} log entry`}
+                  className="cursor-pointer">
+                  <Image src={deleteIcon} alt="" width={16} height={16} />
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <span className="sr-only" role="status">
+            {announcement}
+          </span>
+        </>
       )}
     </section>
   );

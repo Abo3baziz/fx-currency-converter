@@ -26,10 +26,16 @@ export default function TabsSection() {
         onChange={(id) => setActiveTab(id as TabId)}
       />
 
-      {activeTab === "chart" && <RateHistoryChart />}
-      {activeTab === "compare" && <CompareList />}
-      {activeTab === "favorites" && <FavoritesList />}
-      {activeTab === "log" && <ConversionLog />}
+      <div
+        id={`tabpanel-${activeTab}`}
+        role="tabpanel"
+        aria-labelledby={`tab-${activeTab}`}
+        tabIndex={0}>
+        {activeTab === "chart" && <RateHistoryChart />}
+        {activeTab === "compare" && <CompareList />}
+        {activeTab === "favorites" && <FavoritesList />}
+        {activeTab === "log" && <ConversionLog />}
+      </div>
     </div>
   );
 }

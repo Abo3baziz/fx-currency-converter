@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPairRate } from "@/services/api";
 import roundCurrency from "@/utils/roundCurrency";
@@ -19,6 +19,14 @@ export default function ConverterSection() {
   const setSendAmount = useCurrencyStore((s) => s.setSendAmount);
   const setReceiveAmount = useCurrencyStore((s) => s.setReceiveAmount);
   const clearDerivePending = useCurrencyStore((s) => s.clearDerivePending);
+
+  const conversionAnnouncement = useMemo(
+    () =>
+      editingField === "send" && receiveAmount !== ""
+        ? `${sendAmount} ${base} equals ${receiveAmount} ${quote}`
+        : "",
+    [editingField, sendAmount, receiveAmount, base, quote],
+  );
 
   const pairRate = useQuery({
     queryFn: () => getPairRate(base, quote),
@@ -66,6 +74,10 @@ export default function ConverterSection() {
         isError={pairRate.isError}
         onRetry={() => pairRate.refetch()}
       />
+
+      <span aria-live="polite" className="sr-only">
+        {conversionAnnouncement}
+      </span>
     </section>
   );
 }

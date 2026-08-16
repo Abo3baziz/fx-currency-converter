@@ -2,11 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getTickerRates } from "@/services/api";
+import useReducedMotion from "@/hooks/useReducedMotion";
 import SingleLiveRate from "./SingleLiveRate";
 import Marquee from "react-fast-marquee";
 import Loader from "./Loader";
 
 export default function LiveRate() {
+  const reducedMotion = useReducedMotion();
   const tickerRates = useQuery({
     queryFn: getTickerRates,
     queryKey: ["rates", "ticker"],
@@ -31,17 +33,21 @@ export default function LiveRate() {
     );
   }
 
-  return (
-    <Marquee pauseOnHover={true}>
-      {tickerRates.data.map((rate, index) => (
-        <SingleLiveRate
-          key={index}
-          base={rate.base}
-          quote={rate.quote}
-          todayRate={rate.todayRate}
-          yesterdayRate={rate.yesterdayRate}
-        />
-      ))}
-    </Marquee>
-  );
+  const rates = tickerRates.data.map((rate, index) => (
+    <SingleLiveRate
+      key={index}
+      base={rate.base}
+      quote={rate.quote}
+      todayRate={rate.todayRate}
+      yesterdayRate={rate.yesterdayRate}
+    />
+  ));
+
+  if (reducedMotion) {
+    return (
+      <div className="flex overflow-x-auto">{rates}</div>
+    );
+  }
+
+  return <Marquee pauseOnHover={true}>{rates}</Marquee>;
 }

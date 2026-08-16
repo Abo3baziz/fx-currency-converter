@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Area,
@@ -177,16 +177,46 @@ function RangeTabs({
   range: HistoryRange;
   onRangeChange: (range: HistoryRange) => void;
 }) {
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const currentIndex = RANGE_OPTIONS.indexOf(range);
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      nextIndex = (currentIndex + 1) % RANGE_OPTIONS.length;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      nextIndex = (currentIndex - 1 + RANGE_OPTIONS.length) % RANGE_OPTIONS.length;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = RANGE_OPTIONS.length - 1;
+    }
+
+    if (nextIndex !== null) {
+      event.preventDefault();
+      const option = RANGE_OPTIONS[nextIndex];
+      onRangeChange(option);
+      tabRefs.current[nextIndex]?.focus();
+    }
+  };
+
   return (
     <div
       role="tablist"
       aria-label="Chart range"
+      onKeyDown={handleKeyDown}
       className="flex overflow-x-auto">
-      {RANGE_OPTIONS.map((option) => (
+      {RANGE_OPTIONS.map((option, index) => (
         <button
           key={option}
+          ref={(element) => {
+            tabRefs.current[index] = element;
+          }}
+          type="button"
           role="tab"
           aria-selected={range === option}
+          tabIndex={range === option ? 0 : -1}
           onClick={() => onRangeChange(option)}
           className={`py-100 px-150 text-[12px] cursor-pointer ${
             range === option
