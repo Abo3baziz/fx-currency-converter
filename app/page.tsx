@@ -2,6 +2,7 @@ import { Providers } from "./Providers";
 import LiveMarkets from "@/components/LiveMarkets";
 import Header from "@/components/Header";
 import ConverterSection from "@/features/CurrencyConverter/components/ConverterSection";
+import RateHistoryChart from "@/features/RateHistory/components/RateHistoryChart";
 
 export default function Home() {
   return (
@@ -9,8 +10,9 @@ export default function Home() {
       <Providers>
         <Header />
         <LiveMarkets />
-        <section className="max-mobile:py-400 max-mobile:px-200 px-400 pt-600">
+        <section className="max-mobile:py-400 max-mobile:px-200 px-400 pt-600 flex flex-col gap-300">
           <ConverterSection />
+          <RateHistoryChart />
         </section>
       </Providers>
     </>
