@@ -2,25 +2,18 @@ export default function calcChangeRate(
   todayRate: number,
   yesterdayRate: number,
 ) {
-  let changeAmount: number, changePercentage: number;
+  const changeAmount = todayRate - yesterdayRate;
+  const changePercentage = (changeAmount / yesterdayRate) * 100;
+  const positiveChange = changeAmount >= 0 ? 1 : 0;
 
-  if (todayRate > yesterdayRate) {
-    changeAmount = todayRate - yesterdayRate;
-    changePercentage = (todayRate - yesterdayRate) * 100;
+  const amount = positiveChange ? `+${changeAmount.toFixed(2)}` : changeAmount.toFixed(2);
+  const percentage = positiveChange
+    ? `+${changePercentage.toFixed(2)}%`
+    : `${changePercentage.toFixed(2)}%`;
 
-    return {
-      changeAmount: `+${changeAmount.toFixed(2)}`,
-      changePercentage: `+${changePercentage.toFixed(2)}%`,
-      positiveChange: 1,
-    };
-  } else {
-    changeAmount = yesterdayRate - todayRate;
-    changePercentage = (todayRate - yesterdayRate) * 100;
-
-    return {
-      changeAmount: `-${changeAmount.toFixed(2)}`,
-      changePercentage: `${changePercentage.toFixed(2)}%`,
-      positiveChange: 0,
-    };
-  }
+  return {
+    changeAmount: amount,
+    changePercentage: percentage,
+    positiveChange,
+  };
 }
