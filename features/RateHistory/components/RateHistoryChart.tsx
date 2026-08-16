@@ -88,81 +88,115 @@ export default function RateHistoryChart() {
   const positiveChange = stats && stats.change >= 0;
 
   return (
-    <section className="bg-currency-section-bg p-200 rounded-[20px] flex flex-col gap-200">
-      <HistoryHeader range={range} onRangeChange={setRange} />
+    <section className="bg-currency-section-bg p-200 rounded-[20px] flex flex-col gap-300">
+      <div className="flex flex-wrap items-center justify-between gap-200">
+        <div className="flex flex-wrap items-center gap-200 text-[12px]">
+          <p className="text-[14px] text-white">
+            {base}/{quote}
+          </p>
 
-      <div className="flex items-center justify-between text-[14px]">
-        <p className="text-white">
-          {base}/{quote}
-        </p>
+          {stats && (
+            <>
+              <Stat label="Open" value={formatRate(stats.open)} />
+              <Stat label="Last" value={formatRate(stats.last)} />
+              <Stat
+                label="Change"
+                value={`${positiveChange ? "+" : ""}${formatRate(stats.change)}`}
+                tone={positiveChange ? "positive" : "negative"}
+              />
+              <Stat
+                label="%"
+                value={`${positiveChange ? "+" : ""}${stats.changePercent.toFixed(2)}%`}
+                tone={positiveChange ? "positive" : "negative"}
+              />
+            </>
+          )}
+        </div>
 
-        {stats && (
-          <div className="flex gap-200 text-[12px]">
-            <Stat label="Open" value={formatRate(stats.open)} />
-            <Stat label="Last" value={formatRate(stats.last)} />
-            <Stat
-              label="Change"
-              value={`${positiveChange ? "+" : ""}${formatRate(stats.change)}`}
-              tone={positiveChange ? "positive" : "negative"}
-            />
-            <Stat
-              label="%"
-              value={`${positiveChange ? "+" : ""}${stats.changePercent.toFixed(2)}%`}
-              tone={positiveChange ? "positive" : "negative"}
-            />
-          </div>
-        )}
+        <RangeTabs range={range} onRangeChange={setRange} />
       </div>
 
-      <div className="h-[220px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
-            <defs>
-              <linearGradient id="limeGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--lime-500)" stopOpacity={0.45} />
-                <stop offset="100%" stopColor="var(--lime-500)" stopOpacity={0.02} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid
-              stroke="var(--neutral-600)"
-              strokeDasharray="3 3"
-              vertical={false}
-            />
-            <XAxis
-              dataKey="date"
-              tick={{ fill: "var(--neutral-200)", fontSize: 11 }}
-              tickLine={false}
-              axisLine={{ stroke: "var(--neutral-600)" }}
-              minTickGap={40}
-            />
-            <YAxis
-              domain={["auto", "auto"]}
-              tick={{ fill: "var(--neutral-200)", fontSize: 11 }}
-              tickLine={false}
-              axisLine={false}
-              width={50}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "var(--neutral-700)",
-                border: "1px solid var(--neutral-500)",
-                borderRadius: 8,
-                fontSize: 12,
-              }}
-              labelStyle={{ color: "var(--neutral-200)" }}
-              itemStyle={{ color: "white" }}
-            />
-            <Area
-              type="monotone"
-              dataKey="rate"
-              stroke="var(--lime-500)"
-              strokeWidth={2}
-              fill="url(#limeGradient)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+      <div className="border-t border-currency-field-stroke pt-200">
+        <div className="h-[220px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="limeGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="var(--lime-500)" stopOpacity={0.45} />
+                  <stop offset="100%" stopColor="var(--lime-500)" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid
+                stroke="var(--neutral-600)"
+                strokeDasharray="3 3"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="date"
+                tick={{ fill: "var(--neutral-200)", fontSize: 11 }}
+                tickLine={false}
+                axisLine={{ stroke: "var(--neutral-600)" }}
+                minTickGap={40}
+              />
+              <YAxis
+                domain={["auto", "auto"]}
+                tick={{ fill: "var(--neutral-200)", fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                width={50}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "var(--neutral-700)",
+                  border: "1px solid var(--neutral-500)",
+                  borderRadius: 8,
+                  fontSize: 12,
+                }}
+                labelStyle={{ color: "var(--neutral-200)" }}
+                itemStyle={{ color: "white" }}
+              />
+              <Area
+                type="monotone"
+                dataKey="rate"
+                stroke="var(--lime-500)"
+                strokeWidth={2}
+                fill="url(#limeGradient)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </section>
+  );
+}
+
+function RangeTabs({
+  range,
+  onRangeChange,
+}: {
+  range: HistoryRange;
+  onRangeChange: (range: HistoryRange) => void;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="Chart range"
+      className="flex overflow-x-auto">
+      {RANGE_OPTIONS.map((option) => (
+        <button
+          key={option}
+          role="tab"
+          aria-selected={range === option}
+          onClick={() => onRangeChange(option)}
+          className={`py-100 px-150 text-[12px] cursor-pointer ${
+            range === option
+              ? "bg-currency-change-bg text-white"
+              : "text-[var(--neutral-200)] hover:text-white"
+          } rounded-[8px]`}>
+          {option}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -177,25 +211,7 @@ function HistoryHeader({
     <div className="flex items-center justify-between">
       <h2 className="uppercase text-[14px] text-white">Rate history</h2>
 
-      <div
-        role="tablist"
-        aria-label="Chart range"
-        className="flex overflow-x-auto">
-        {RANGE_OPTIONS.map((option) => (
-          <button
-            key={option}
-            role="tab"
-            aria-selected={range === option}
-            onClick={() => onRangeChange(option)}
-            className={`py-100 px-150 text-[12px] cursor-pointer ${
-              range === option
-                ? "bg-currency-change-bg text-white"
-                : "text-[var(--neutral-200)] hover:text-white"
-            } rounded-[8px]`}>
-            {option}
-          </button>
-        ))}
-      </div>
+      <RangeTabs range={range} onRangeChange={onRangeChange} />
     </div>
   );
 }
