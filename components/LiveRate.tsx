@@ -19,9 +19,12 @@ export default function LiveRate() {
     queryKey: ["rates", "yesterday"],
   });
 
+  // handle fetching loading time
   if (todayRates.isPending || yesterdarRates.isPending) {
     return <Loader />;
   }
+
+  // TODO handle failed fetch process
 
   const matchedRates = matchRates(todayRates.data, yesterdarRates.data);
 
