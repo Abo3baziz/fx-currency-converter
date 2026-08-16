@@ -1,10 +1,70 @@
+"use client";
+
+import { useCurrencyStore } from "../store/useCurrencyStore";
+import convertCurrency, { convertReverse } from "@/utils/convertCurrency";
+import formatAmount from "@/utils/formatAmount";
 import ChangeCurrencyButton from "./ChangeCurrencyButton";
 
-export default function CurrencyField({ title }: { title: string }) {
+export default function CurrencyField({
+  title,
+  rate,
+}: {
+  title: "send" | "receive";
+  rate: number | undefined;
+}) {
+  const amount = useCurrencyStore((s) => s.amount);
+  const editingField = useCurrencyStore((s) => s.editingField);
+  const setAmount = useCurrencyStore((s) => s.setAmount);
+  const setEditingField = useCurrencyStore((s) => s.setEditingField);
+
+  const isEditing = editingField === title;
+  const isSend = title === "send";
+
+  const displayValue = (() => {
+    if (rate === undefined) {
+      return isEditing ? amount : "";
+    }
+
+    if (isEditing) {
+      return amount;
+    }
+
+    const numericAmount = Number(amount) || 0;
+    const converted = isSend
+      ? convertCurrency(numericAmount, rate)
+      : convertReverse(numericAmount, rate);
+
+    return formatAmount(converted);
+  })();
+
+  const handleSelectField = () => {
+    if (isEditing) {
+      return;
+    }
+    if (rate === undefined) {
+      setEditingField(title);
+      return;
+    }
+
+    const numericAmount = Number(amount) || 0;
+    const converted = isSend
+      ? convertCurrency(numericAmount, rate)
+      : convertReverse(numericAmount, rate);
+
+    setAmount(String(converted));
+    setEditingField(title);
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(event.target.value);
+  };
+
+  const fieldType = isSend ? "base" : "quote";
+
   return (
     <div className="bg-currency-field-bg max-mobile:p-200 p-250 rounded-2xl flex flex-col gap-250 border-currency-field-stroke border">
       <label
-        htmlFor={title}
+        htmlFor={isSend ? "send" : "receive"}
         className="uppercase text-[14px] text-[var(--neutral-100)]">
         {title}
       </label>
@@ -12,15 +72,16 @@ export default function CurrencyField({ title }: { title: string }) {
       <div className="flex">
         <input
           type="number"
-          name={title}
-          id={title}
+          name={isSend ? "send" : "receive"}
+          id={isSend ? "send" : "receive"}
           min={1}
-          className="uppercase max-tablet:text-[32px] text-[40px] w-full"
+          value={displayValue}
+          onChange={handleChange}
+          onFocus={handleSelectField}
+          className="uppercase max-tablet:text-[32px] text-[40px] w-full bg-transparent"
         />
 
-        <ChangeCurrencyButton
-          fieldType={title === "send" ? "base" : "quote"}
-        />
+        <ChangeCurrencyButton fieldType={fieldType} />
       </div>
     </div>
   );

@@ -5,9 +5,11 @@ type CurrencyStore = {
   base: string;
   quote: string;
   amount: string;
+  editingField: "send" | "receive";
   setBase: (base: string) => void;
   setQuote: (quote: string) => void;
   setAmount: (amount: string) => void;
+  setEditingField: (field: "send" | "receive") => void;
   swap: () => void;
   favorites: FavoritePair[];
   toggleFavorite: (base: string, quote: string) => void;
@@ -45,10 +47,17 @@ export const useCurrencyStore = create<CurrencyStore>()(
       base: "EUR",
       quote: "USD",
       amount: "100",
+      editingField: "send",
       setBase: (base) => set({ base }),
       setQuote: (quote) => set({ quote }),
       setAmount: (amount) => set({ amount }),
-      swap: () => set((state) => ({ base: state.quote, quote: state.base })),
+      setEditingField: (editingField) => set({ editingField }),
+      swap: () =>
+        set((state) => ({
+          base: state.quote,
+          quote: state.base,
+          editingField: "send",
+        })),
       favorites: [],
       toggleFavorite: (base, quote) =>
         set((state) => {
