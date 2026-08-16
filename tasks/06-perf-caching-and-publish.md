@@ -1,6 +1,6 @@
 # 06 - Performance, Caching & Publish
 
-Status: pending
+Status: done (deployment complete; hackathon submission remains a manual step)
 Priority: medium
 
 ## Goal

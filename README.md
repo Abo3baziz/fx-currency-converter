@@ -13,7 +13,7 @@ a rate history chart, pair comparison, favorites, and a conversion log.
 
 ### Links
 
-- Live Site URL: [https://your-vercel-app.vercel.app](https://your-vercel-app.vercel.app)
+- Live Site URL: [https://fx-currency-converter-nine.vercel.app](https://fx-currency-converter-nine.vercel.app)
 - Repository URL: [https://github.com/Abo3baziz/fx-currency-converter](https://github.com/Abo3baziz/fx-currency-converter)
 
 ## Features
