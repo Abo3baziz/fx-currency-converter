@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPairRate } from "@/services/api";
-import getRelativeTime from "@/utils/getRelativeTime";
 import roundCurrency from "@/utils/roundCurrency";
 import { useCurrencyStore } from "../store/useCurrencyStore";
 import CurrencyField from "./CurrencyField";
@@ -20,7 +19,6 @@ export default function ConverterSection() {
   const setSendAmount = useCurrencyStore((s) => s.setSendAmount);
   const setReceiveAmount = useCurrencyStore((s) => s.setReceiveAmount);
   const clearDerivePending = useCurrencyStore((s) => s.clearDerivePending);
-  const logConversion = useCurrencyStore((s) => s.logConversion);
 
   const pairRate = useQuery({
     queryFn: () => getPairRate(base, quote),
@@ -53,36 +51,6 @@ export default function ConverterSection() {
     setReceiveAmount,
     clearDerivePending,
   ]);
-
-  useEffect(() => {
-    const sendNumber = Number(sendAmount);
-    const receiveNumber = Number(receiveAmount);
-
-    if (
-      sendAmount === "" ||
-      !Number.isFinite(sendNumber) ||
-      sendNumber <= 0 ||
-      !Number.isFinite(receiveNumber) ||
-      receiveNumber <= 0
-    ) {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      const timestamp = Date.now();
-      logConversion({
-        id: crypto.randomUUID(),
-        base,
-        quote,
-        sendAmount: sendNumber,
-        receiveAmount: receiveNumber,
-        timestamp,
-        relativeTime: getRelativeTime(timestamp),
-      });
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [sendAmount, receiveAmount, base, quote, logConversion]);
 
   return (
     <section className="flex flex-col gap-200">
