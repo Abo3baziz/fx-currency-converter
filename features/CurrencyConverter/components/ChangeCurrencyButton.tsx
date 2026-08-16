@@ -97,7 +97,7 @@ export default function ChangeCurrencyButton({
           id={`currency-listbox-${fieldType}`}
           role="listbox"
           aria-label={`Select ${fieldType} currency`}
-          className="absolute top-full mt-1 left-0 bg-currency-change-bg border border-currency-change-stroke rounded-[8px] overflow-auto max-h-[300px] z-10 min-w-[280px] shadow-lg">
+          className="absolute top-full mt-1 right-0 bg-currency-change-bg border border-currency-change-stroke rounded-[8px] overflow-auto max-h-[300px] z-10 w-[280px] max-w-[calc(100vw-2rem)] shadow-lg">
           <div className="sticky top-0 flex items-center gap-2 p-2.5 border-b border-currency-change-stroke bg-currency-change-bg">
             <Image
               src={searchIcon}

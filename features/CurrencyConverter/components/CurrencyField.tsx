@@ -1,8 +1,7 @@
 "use client";
 
 import { useCurrencyStore } from "../store/useCurrencyStore";
-import convertCurrency, { convertReverse } from "@/utils/convertCurrency";
-import formatAmount from "@/utils/formatAmount";
+import roundCurrency from "@/utils/roundCurrency";
 import ChangeCurrencyButton from "./ChangeCurrencyButton";
 
 export default function CurrencyField({
@@ -12,30 +11,17 @@ export default function CurrencyField({
   title: "send" | "receive";
   rate: number | undefined;
 }) {
-  const amount = useCurrencyStore((s) => s.amount);
+  const sendAmount = useCurrencyStore((s) => s.sendAmount);
+  const receiveAmount = useCurrencyStore((s) => s.receiveAmount);
   const editingField = useCurrencyStore((s) => s.editingField);
-  const setAmount = useCurrencyStore((s) => s.setAmount);
+  const setSendAmount = useCurrencyStore((s) => s.setSendAmount);
+  const setReceiveAmount = useCurrencyStore((s) => s.setReceiveAmount);
   const setEditingField = useCurrencyStore((s) => s.setEditingField);
 
   const isEditing = editingField === title;
   const isSend = title === "send";
 
-  const displayValue = (() => {
-    if (rate === undefined) {
-      return isEditing ? amount : "";
-    }
-
-    if (isEditing) {
-      return amount;
-    }
-
-    const numericAmount = Number(amount) || 0;
-    const converted = isSend
-      ? convertCurrency(numericAmount, rate)
-      : convertReverse(numericAmount, rate);
-
-    return formatAmount(converted);
-  })();
+  const displayValue = isSend ? sendAmount : receiveAmount;
 
   const handleSelectField = () => {
     if (isEditing) {
@@ -46,17 +32,32 @@ export default function CurrencyField({
       return;
     }
 
-    const numericAmount = Number(amount) || 0;
-    const converted = isSend
-      ? convertCurrency(numericAmount, rate)
-      : convertReverse(numericAmount, rate);
-
-    setAmount(String(converted));
+    if (isSend) {
+      const converted = roundCurrency((Number(receiveAmount) || 0) / rate);
+      setSendAmount(String(converted));
+    } else {
+      const converted = roundCurrency((Number(sendAmount) || 0) * rate);
+      setReceiveAmount(String(converted));
+    }
     setEditingField(title);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(event.target.value);
+    const value = event.target.value;
+
+    if (isSend) {
+      setSendAmount(value);
+      if (rate !== undefined) {
+        const converted = roundCurrency((Number(value) || 0) * rate);
+        setReceiveAmount(String(converted));
+      }
+    } else {
+      setReceiveAmount(value);
+      if (rate !== undefined) {
+        const converted = roundCurrency((Number(value) || 0) / rate);
+        setSendAmount(String(converted));
+      }
+    }
   };
 
   const fieldType = isSend ? "base" : "quote";

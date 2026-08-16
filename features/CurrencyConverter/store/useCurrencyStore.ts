@@ -4,12 +4,16 @@ import { persist } from "zustand/middleware";
 type CurrencyStore = {
   base: string;
   quote: string;
-  amount: string;
+  sendAmount: string;
+  receiveAmount: string;
   editingField: "send" | "receive";
+  derivePending: boolean;
   setBase: (base: string) => void;
   setQuote: (quote: string) => void;
-  setAmount: (amount: string) => void;
+  setSendAmount: (amount: string) => void;
+  setReceiveAmount: (amount: string) => void;
   setEditingField: (field: "send" | "receive") => void;
+  clearDerivePending: () => void;
   swap: () => void;
   favorites: FavoritePair[];
   toggleFavorite: (base: string, quote: string) => void;
@@ -46,16 +50,22 @@ export const useCurrencyStore = create<CurrencyStore>()(
     (set) => ({
       base: "EUR",
       quote: "USD",
-      amount: "100",
+      sendAmount: "100",
+      receiveAmount: "",
       editingField: "send",
-      setBase: (base) => set({ base }),
-      setQuote: (quote) => set({ quote }),
-      setAmount: (amount) => set({ amount }),
+      derivePending: true,
+      setBase: (base) => set({ base, derivePending: true }),
+      setQuote: (quote) => set({ quote, derivePending: true }),
+      setSendAmount: (sendAmount) => set({ sendAmount }),
+      setReceiveAmount: (receiveAmount) => set({ receiveAmount }),
       setEditingField: (editingField) => set({ editingField }),
+      clearDerivePending: () => set({ derivePending: false }),
       swap: () =>
         set((state) => ({
           base: state.quote,
           quote: state.base,
+          sendAmount: state.receiveAmount,
+          receiveAmount: state.sendAmount,
           editingField: "send",
         })),
       favorites: [],
