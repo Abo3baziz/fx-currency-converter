@@ -4,10 +4,13 @@ import { matchRates } from "@/utils/matchRates";
 import { CurrencyInfo, CurrencyRate, LatestRates, RateTypes } from "@/Types";
 
 const BASE_URL = "https://api.frankfurter.dev/v2";
+const REVALIDATE_SECONDS = 3600;
 
 async function request<T>(path: string): Promise<T> {
   try {
-    const res = await fetch(`${BASE_URL}${path}`);
+    const res = await fetch(`${BASE_URL}${path}`, {
+      next: { revalidate: REVALIDATE_SECONDS },
+    });
 
     if (!res.ok) {
       throw new Error(`API request failed: ${res.status} ${res.statusText} for ${path}`);
@@ -44,7 +47,13 @@ export async function getHistory(
 }
 
 export async function getTickerRates(): Promise<RateTypes[]> {
-  const today = await request<LatestRates>(`/rates?date=${getDate(0)}`);
-  const yesterday = await request<LatestRates>(`/rates?date=${getDate(1)}`);
+  const rates = await request<LatestRates>(
+    `/rates?from=${getDate(6)}&to=${getDate(0)}`,
+  );
+  const dates = [...new Set(rates.map((entry) => entry.date))].sort();
+  const todayDate = dates[dates.length - 1];
+  const yesterdayDate = dates[dates.length - 2];
+  const today = rates.filter((entry) => entry.date === todayDate);
+  const yesterday = rates.filter((entry) => entry.date === yesterdayDate);
   return matchRates(today, yesterday);
 }

@@ -1,4 +1,4 @@
-export default function getDate(num: 0 | 1): string {
+export default function getDate(num: number): string {
   const date = new Date();
 
   const year = date.getFullYear();
